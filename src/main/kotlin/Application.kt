@@ -14,7 +14,8 @@ fun main(args: Array<String>) {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") { // 0.0.0.0 важливо для деплою
         routing {
             get("/") {
-                call.respondText("Привіт! Мій Android бекенд працює11!")
+                call.respondText("Привіт! Мій Android бекенд працює11!" +
+                        "1212321")
             }
             get("/status") {
                 call.respond(mapOf("status" to "OK", "version" to "1.0"))
