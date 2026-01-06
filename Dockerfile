@@ -1,16 +1,22 @@
 FROM ubuntu:latest
 LABEL authors="ydazhuk"
 
-#ENTRYPOINT ["top", "-b"]
+# Етап збірки
+FROM gradle:8.5-jdk17 AS build
+WORKDIR /home/gradle/src
+COPY --chown=gradle:gradle . .
 
-# Використовуємо образ з JDK
-FROM openjdk:17-jdk-slim
+# Даємо права на виконання та збираємо проект через стандартний build
+RUN chmod +x gradlew
+RUN ./gradlew build --no-daemon
 
-# Копіюємо збірку нашого сервера (спочатку зроби ./gradlew build)
-COPY build/libs/*-all.jar /app/server.jar
+# Етап запуску
+FROM eclipse-temurin:21-jdk-alpine
+WORKDIR /app
 
-# Відкриваємо порт
+# Копіюємо файл. Ми використовуємо wildcard (*), щоб Docker знайшов JAR,
+# навіть якщо він називається не так, як ми очікуємо.
+COPY --from=build /home/gradle/src/build/libs/*.jar server.jar
+
 EXPOSE 8080
-
-# Запускаємо додаток
-CMD ["java", "-jar", "/app/server.jar"]
+CMD ["java", "-jar", "server.jar"]

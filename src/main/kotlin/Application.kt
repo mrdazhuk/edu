@@ -7,7 +7,6 @@ import io.ktor.server.response.respond
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
-import jdk.internal.vm.ScopedValueContainer.call
 
 fun main(args: Array<String>) {
 //    io.ktor.server.netty.EngineMain.main(args)
@@ -15,7 +14,7 @@ fun main(args: Array<String>) {
     embeddedServer(Netty, port = 8080, host = "0.0.0.0") { // 0.0.0.0 важливо для деплою
         routing {
             get("/") {
-                call.respondText("Привіт! Мій Android бекенд працює!")
+                call.respondText("Привіт! Мій Android бекенд працює11!")
             }
             get("/status") {
                 call.respond(mapOf("status" to "OK", "version" to "1.0"))
