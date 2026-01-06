@@ -7,7 +7,7 @@ import io.ktor.server.routing.*
 fun Application.configureRouting() {
     routing {
         get("/") {
-            call.respondText("Привіт! Мій Android бекенд працює!1!!!")
+            call.respondText("Привіт! Мій Android бекенд працює!222!")
         }
         get("/status") {
             call.respond(mapOf("status" to "OK", "version" to "1.0"))
