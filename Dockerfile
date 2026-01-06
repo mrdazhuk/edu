@@ -18,5 +18,5 @@ WORKDIR /app
 # навіть якщо він називається не так, як ми очікуємо.
 COPY --from=build /home/gradle/src/build/libs/*.jar server.jar
 
-EXPOSE 8080
+EXPOSE 8081
 CMD ["java", "-jar", "server.jar"]
