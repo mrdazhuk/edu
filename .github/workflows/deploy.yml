@@ -2,7 +2,7 @@ name: CI/CD Ktor App
 
 on:
   push:
-    branches: [ "main" ] # Спрацює, коли зробиш push у гілку main
+    branches: [ "master" ] # Спрацює, коли зробиш push у гілку master
 
 jobs:
   build-and-push:
