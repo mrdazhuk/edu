@@ -52,17 +52,17 @@ jobs:
     steps:
       - name: Pull and Run
         run: |
-          # Авторизація Podman у реєстрі GitHub
+          # Авторизація
           echo "${{ secrets.GITHUB_TOKEN }}" | podman login ghcr.io -u ${{ github.actor }} --password-stdin
           
           # Оновлюємо образ
           podman pull ghcr.io/${{ github.repository }}:latest
           
-          # Перезапускаємо контейнер
-          podman stop ktor-app || true
-          podman rm ktor-app || true
+          # Запуск з автоматичною заміною старого контейнера
+          # Ми прибираємо stop/rm, бо --replace робить це надійно
           podman run -d \
             --name ktor-app \
+            --replace \
             --restart always \
             --net=host \
             ghcr.io/${{ github.repository }}:latest
