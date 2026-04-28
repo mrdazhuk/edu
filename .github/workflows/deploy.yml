@@ -6,14 +6,22 @@ on:
 
 jobs:
   build-and-push:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest # Збираємо на швидких серверах GitHub
     permissions:
       contents: read
-      packages: write
-
+      packages: write  # ОСЬ ЦЕЙ РЯДОК ВИРІШУЄ ПРОБЛЕМУ
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'gradle' # Вбудоване кешування бібліотек
+
+      - name: Build Fat JAR
+        run: ./gradlew buildFatJar --no-daemon
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
@@ -21,30 +29,23 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Log in to GHCR
+      - name: Login to GHCR
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Cache Gradle packages
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
           context: .
-          platforms: linux/arm64 # Збираємо під процесор малинки
+          platforms: linux/arm64
           push: true
           tags: ghcr.io/${{ github.repository }}:latest
+          # Кеш для шарів докера
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
 
   deploy:
     needs: build-and-push
